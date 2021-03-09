@@ -85,9 +85,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\include;C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\include\core;C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\include\gen;C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\godot-headers;C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\lib\src;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\bin;$(LibraryPath)</LibraryPath>
-    <SourcePath>C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\src;C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\src\core;C:\Users\adinh\Work\godot-dev\gdnative_projects\godot_voronoi\godot-cpp\src\gen;$(SourcePath)</SourcePath>
+    <IncludePath>$(ProjectDir)godot-cpp\include;$(ProjectDir)godot-cpp\include\core;$(ProjectDir)godot-cpp\include\gen;$(ProjectDir)godot-cpp\godot-headers;$(ProjectDir)lib\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)godot-cpp\bin;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(ProjectDir)godot-cpp\src;$(ProjectDir)godot-cpp\src\core;$(ProjectDir)godot-cpp\src\gen;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
