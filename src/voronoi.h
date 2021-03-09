@@ -49,6 +49,8 @@ namespace godot {
 		static void _register_methods();
 		void _init();
 
+		PoolIntArray sites() const;
+		
 		PoolVector2Array centers() const;
 		Vector2 center_at(int site_idx) const;
 

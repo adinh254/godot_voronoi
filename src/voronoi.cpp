@@ -16,6 +16,7 @@ namespace {
 using namespace godot;
 
 void VoronoiDiagram::_register_methods() {
+	register_method("sites", &VoronoiDiagram::sites);
 	register_method("centers", &VoronoiDiagram::centers);
 	register_method("center_at", &VoronoiDiagram::center_at);
 	register_method("cells", &VoronoiDiagram::cells);
@@ -27,6 +28,18 @@ void VoronoiDiagram::_register_methods() {
 
 void VoronoiDiagram::_init() {
 	_diagram = jcv_diagram{};
+}
+
+PoolIntArray VoronoiDiagram::sites() const {
+	PoolIntArray result{};
+	result.resize(_diagram.numsites);
+
+	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
+	PoolIntArray::Write result_w = result.write();
+	for (int i = 0; i < _diagram.numsites; i++) {
+		result_w[i] = sites[i].index;
+	}
+	return result;
 }
 
 PoolVector2Array VoronoiDiagram::centers() const {
