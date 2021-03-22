@@ -88,7 +88,6 @@ PoolVector2Array VoronoiDiagram::site_get_cell(const int site_id) const {
 Ref<ConvexPolygonShape2D> VoronoiDiagram::site_get_polygon(const int site_id) const {
 	Ref<ConvexPolygonShape2D> cell_polygon{};
 	cell_polygon.instance();
-
 	cell_polygon->set_points(site_get_cell(site_id));
 	return cell_polygon;
 }
