@@ -49,18 +49,15 @@ namespace godot {
 		static void _register_methods();
 		void _init();
 
-		PoolIntArray sites() const;
-		
-		PoolVector2Array centers() const;
-		Vector2 center_at(int site_idx) const;
+		int get_site_count() const;
+		PoolVector2Array get_site_positions() const;
+		Array get_cells() const;
+		Array get_polygons() const;
 
-		Array cells() const;
-		PoolVector2Array cell_at(int site_idx) const;
-
-		Array polygons() const;
-		Ref<ConvexPolygonShape2D> polygon_at(int site_idx) const;
-
-		PoolIntArray neighbors_at(int site_idx) const;
+		Vector2 site_get_position(int site_id) const;
+		PoolVector2Array site_get_cell(int site_id) const;
+		Ref<ConvexPolygonShape2D> site_get_polygon(int site_id) const;
+		Array site_get_neighbors(int site_id) const;
 
 		VoronoiDiagram() = default;
 		~VoronoiDiagram();

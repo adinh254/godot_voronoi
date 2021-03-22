@@ -16,33 +16,25 @@ namespace {
 using namespace godot;
 
 void VoronoiDiagram::_register_methods() {
-	register_method("sites", &VoronoiDiagram::sites);
-	register_method("centers", &VoronoiDiagram::centers);
-	register_method("center_at", &VoronoiDiagram::center_at);
-	register_method("cells", &VoronoiDiagram::cells);
-	register_method("cell_at", &VoronoiDiagram::cell_at);
-	register_method("polygons", &VoronoiDiagram::polygons);
-	register_method("polygon_at", &VoronoiDiagram::polygon_at);
-	register_method("neighbors_at", &VoronoiDiagram::neighbors_at);
+	register_method("get_site_count", &VoronoiDiagram::get_site_count);
+	register_method("get_site_positions", &VoronoiDiagram::get_site_positions);
+	register_method("get_cells", &VoronoiDiagram::get_cells);
+	register_method("get_polygons", &VoronoiDiagram::get_polygons);
+	register_method("site_get_position", &VoronoiDiagram::site_get_position);
+	register_method("site_get_cell", &VoronoiDiagram::site_get_cell);
+	register_method("site_get_polygon", &VoronoiDiagram::site_get_polygon);
+	register_method("site_get_neighbors", &VoronoiDiagram::site_get_neighbors);
 }
 
 void VoronoiDiagram::_init() {
 	_diagram = jcv_diagram{};
 }
 
-PoolIntArray VoronoiDiagram::sites() const {
-	PoolIntArray result{};
-	result.resize(_diagram.numsites);
-
-	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
-	PoolIntArray::Write result_w = result.write();
-	for (int i = 0; i < _diagram.numsites; i++) {
-		result_w[i] = sites[i].index;
-	}
-	return result;
+int VoronoiDiagram::get_site_count() const {
+	return _diagram.numsites;
 }
 
-PoolVector2Array VoronoiDiagram::centers() const {
+PoolVector2Array VoronoiDiagram::get_site_positions() const {
 	PoolVector2Array result{};
 	result.resize(_diagram.numsites);
 
@@ -55,27 +47,37 @@ PoolVector2Array VoronoiDiagram::centers() const {
 	return result;
 }
 
-Vector2 VoronoiDiagram::center_at(const int site_idx) const {
-	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
-	return Vector2{ sites[site_idx].p.x, sites[site_idx].p.y };
-}
-
-Array VoronoiDiagram::cells() const {
+Array VoronoiDiagram::get_cells() const {
 	Array result{};
 	result.resize(_diagram.numsites);
 
 	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
 	for (int i = 0; i < _diagram.numsites; i++) {
-		result[i] = cell_at(i);
+		result[i] = site_get_cell(i);
 	}
 	return result;
 }
 
-PoolVector2Array VoronoiDiagram::cell_at(const int site_idx) const {
+Array VoronoiDiagram::get_polygons() const {
+	Array result{};
+	result.resize(_diagram.numsites);
+
+	for (int i = 0; i < _diagram.numsites; i++) {
+		result[i] = site_get_polygon(i);
+	}
+	return result;
+}
+
+Vector2 VoronoiDiagram::site_get_position(const int site_id) const {
+	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
+	return Vector2{ sites[site_id].p.x, sites[site_id].p.y };
+}
+
+PoolVector2Array VoronoiDiagram::site_get_cell(const int site_id) const {
 	PoolVector2Array result{};
 
 	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
-	const jcv_graphedge *graphedge = sites[site_idx].edges;
+	const jcv_graphedge *graphedge = sites[site_id].edges;
 	while (graphedge) {
 		result.push_back(Vector2{ graphedge->pos[0].x, graphedge->pos[0].y });
 		graphedge = graphedge->next;
@@ -83,29 +85,19 @@ PoolVector2Array VoronoiDiagram::cell_at(const int site_idx) const {
 	return result;
 }
 
-Array VoronoiDiagram::polygons() const {
-	Array result{};
-	result.resize(_diagram.numsites);
-
-	for (int i = 0; i < _diagram.numsites; i++) {
-		result[i] = polygon_at(i);
-	}
-	return result;
-}
-
-Ref<ConvexPolygonShape2D> VoronoiDiagram::polygon_at(const int site_idx) const {
+Ref<ConvexPolygonShape2D> VoronoiDiagram::site_get_polygon(const int site_id) const {
 	Ref<ConvexPolygonShape2D> cell_polygon{};
 	cell_polygon.instance();
 
-	cell_polygon->set_points(cell_at(site_idx));
+	cell_polygon->set_points(site_get_cell(site_id));
 	return cell_polygon;
 }
 
-PoolIntArray VoronoiDiagram::neighbors_at(const int site_idx) const {
-	PoolIntArray result{};
+Array VoronoiDiagram::site_get_neighbors(const int site_id) const {
+	Array result{};
 
 	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
-	const jcv_graphedge *graphedge = sites[site_idx].edges;
+	const jcv_graphedge *graphedge = sites[site_id].edges;
 	while (graphedge) {
 		if (graphedge->neighbor)
 			result.push_back(graphedge->neighbor->index);
