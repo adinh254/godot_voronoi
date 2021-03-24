@@ -152,6 +152,7 @@ void Voronoi::relax_points(int iterations = 1) {
 			_points.data(),
 			_has_boundaries ? &_boundaries : NULL,
 			NULL,
+			NULL,
 			&useralloc,
 			&userfree,
 			&diagram
@@ -188,6 +189,7 @@ Ref<VoronoiDiagram> Voronoi::generate_diagram() const {
 		_points.size(),
 		_points.data(),
 		_has_boundaries ? &_boundaries : NULL,
+		NULL,
 		NULL,
 		&useralloc,
 		&userfree,
