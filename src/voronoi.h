@@ -81,7 +81,7 @@ namespace godot {
 
 		Voronoi() = default;
 		~Voronoi() = default;
-	
+
 	private:
 		jcv_rect _boundaries;
 		bool _has_boundaries;

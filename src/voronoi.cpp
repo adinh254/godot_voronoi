@@ -121,6 +121,8 @@ void Voronoi::_register_methods() {
 }
 
 void Voronoi::_init() {
+	_boundaries = jcv_rect{};
+	_has_boundaries = false;
 }
 
 void Voronoi::set_points(PoolVector2Array points) {
@@ -135,7 +137,7 @@ void Voronoi::set_points(PoolVector2Array points) {
 }
 
 void Voronoi::set_boundaries(Rect2 boundaries) {
-	_boundaries = jcv_rect {
+	_boundaries = jcv_rect{
 		jcv_point { boundaries.position.x, boundaries.position.y },
 		jcv_point { boundaries.position.x + boundaries.size.x, boundaries.position.y + boundaries.size.y }
 	};
@@ -157,14 +159,14 @@ void Voronoi::relax_points(int iterations = 1) {
 			&userfree,
 			&diagram
 		);
-		const jcv_site* sites = jcv_diagram_get_sites(&diagram);
+		const jcv_site *sites = jcv_diagram_get_sites(&diagram);
 		const int numsites = diagram.numsites;
 		for (int i = 0; i < numsites; ++i) {
-			const jcv_site* site = &sites[i];
+			const jcv_site *site = &sites[i];
 			jcv_point sum = site->p;
 			int count = 1;
 
-			const jcv_graphedge* edge = site->edges;
+			const jcv_graphedge *edge = site->edges;
 
 			while (edge) {
 				sum.x += edge->pos[0].x;
