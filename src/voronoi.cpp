@@ -138,7 +138,7 @@ void Voronoi::set_points(PoolVector2Array points) {
 	for (int i = 0; i < points.size(); i++)
 		new_points.push_back({ points[i].x, points[i].y });
 
-	_points.swap(new_points);
+	_points = std::move(new_points);
 }
 
 void Voronoi::set_boundaries(Rect2 boundaries) {
@@ -150,22 +150,22 @@ void Voronoi::set_boundaries(Rect2 boundaries) {
 }
 
 void Voronoi::relax_points(int iterations = 1) {
-	voronoi_detail::vector<jcv_point> new_points{};
+	voronoi_detail::vector<jcv_point> new_points{ _points };
 	for (int j = 0; j < iterations; j++) {
-		jcv_diagram diagram;
-		memset(&diagram, 0, sizeof(jcv_diagram));
+		jcv_diagram new_diagram{};
 		jcv_diagram_generate_useralloc(
-			_points.size(),
-			_points.data(),
+			new_points.size(),
+			new_points.data(),
 			_has_boundaries ? &_boundaries : NULL,
 			NULL,
 			NULL,
 			&useralloc,
 			&userfree,
-			&diagram
+			&new_diagram
 		);
-		const jcv_site *sites = jcv_diagram_get_sites(&diagram);
-		const int numsites = diagram.numsites;
+		const jcv_site *sites = jcv_diagram_get_sites(&new_diagram);
+		const int numsites = new_diagram.numsites;
+		new_points.clear();
 		for (int i = 0; i < numsites; ++i) {
 			const jcv_site *site = &sites[i];
 			jcv_point sum = site->p;
@@ -182,7 +182,7 @@ void Voronoi::relax_points(int iterations = 1) {
 
 			new_points.push_back({ sum.x / count, sum.y / count });
 		}
-		jcv_diagram_free(&diagram);
+		jcv_diagram_free(&new_diagram);
 	}
 	_points = std::move(new_points);
 }
