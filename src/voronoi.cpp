@@ -111,7 +111,7 @@ void VoronoiDiagram::set_diagram(const jcv_diagram &diagram) {
 }
 
 void VoronoiDiagram::build_objects() {
-	_sites_by_index.reserve(_diagram.numsites);
+	_sites_by_index.resize(_diagram.numsites);
 
 	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
 	for (int i = 0; i < _diagram.numsites; i++)
