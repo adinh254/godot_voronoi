@@ -63,8 +63,11 @@ namespace godot {
 		~VoronoiDiagram();
 
 		void set_diagram(const jcv_diagram &diagram);
+
+		void build_objects();
 	private:
 		jcv_diagram _diagram;
+		voronoi_detail::vector<int> _sites_by_index;
 	};
 
 	class Voronoi : public Reference {

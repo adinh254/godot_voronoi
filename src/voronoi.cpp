@@ -40,9 +40,8 @@ PoolVector2Array VoronoiDiagram::get_site_positions() const {
 
 	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
 	PoolVector2Array::Write result_w = result.write();
-	for (int i = 0; i < _diagram.numsites; i++) {
+	for (int i = 0; i < _diagram.numsites; i++)
 		result_w[i] = Vector2{ sites[i].p.x, sites[i].p.y };
-	}
 
 	return result;
 }
@@ -52,9 +51,8 @@ Array VoronoiDiagram::get_cells() const {
 	result.resize(_diagram.numsites);
 
 	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
-	for (int i = 0; i < _diagram.numsites; i++) {
+	for (int i = 0; i < _diagram.numsites; i++)
 		result[i] = site_get_cell(i);
-	}
 	return result;
 }
 
@@ -62,9 +60,8 @@ Array VoronoiDiagram::get_polygons() const {
 	Array result{};
 	result.resize(_diagram.numsites);
 
-	for (int i = 0; i < _diagram.numsites; i++) {
+	for (int i = 0; i < _diagram.numsites; i++)
 		result[i] = site_get_polygon(i);
-	}
 	return result;
 }
 
@@ -99,7 +96,7 @@ Array VoronoiDiagram::site_get_neighbors(const int site_id) const {
 	const jcv_graphedge *graphedge = sites[site_id].edges;
 	while (graphedge) {
 		if (graphedge->neighbor)
-			result.push_back(graphedge->neighbor->index);
+			result.push_back(_sites_by_index[graphedge->neighbor->index]);
 		graphedge = graphedge->next;
 	}
 	return result;
@@ -111,6 +108,14 @@ VoronoiDiagram::~VoronoiDiagram() {
 
 void VoronoiDiagram::set_diagram(const jcv_diagram &diagram) {
 	_diagram = diagram;
+}
+
+void VoronoiDiagram::build_objects() {
+	_sites_by_index.reserve(_diagram.numsites);
+
+	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
+	for (int i = 0; i < _diagram.numsites; i++)
+		_sites_by_index[sites[i].index] = i;
 }
 
 void Voronoi::_register_methods() {
@@ -133,13 +138,13 @@ void Voronoi::set_points(PoolVector2Array points) {
 	for (int i = 0; i < points.size(); i++)
 		new_points.push_back({ points[i].x, points[i].y });
 
-	_points = std::move(new_points);
+	_points.swap(new_points);
 }
 
 void Voronoi::set_boundaries(Rect2 boundaries) {
 	_boundaries = jcv_rect{
-		jcv_point { boundaries.position.x, boundaries.position.y },
-		jcv_point { boundaries.position.x + boundaries.size.x, boundaries.position.y + boundaries.size.y }
+		jcv_point{ boundaries.position.x, boundaries.position.y },
+		jcv_point{ boundaries.position.x + boundaries.size.x, boundaries.position.y + boundaries.size.y }
 	};
 	_has_boundaries = true;
 }
@@ -198,5 +203,6 @@ Ref<VoronoiDiagram> Voronoi::generate_diagram() const {
 		&new_diagram
 	);
 	result->set_diagram(new_diagram);
+	result->build_objects();
 	return result;
 }
