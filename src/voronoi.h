@@ -6,6 +6,7 @@
 #include <jc_voronoi.h>
 
 #include <vector>
+#include<unordered_map>
 
 namespace voronoi_detail {
 	template<typename T>
@@ -35,6 +36,9 @@ namespace voronoi_detail {
 			godot::api->godot_free(ptr);
 		}
 	};
+
+	template<typename K, typename V>
+	using map = std::unordered_map<K, V, std::hash<K>, std::equal_to<K>, GodotAllocator<std::pair<const K, V>>>;
 
 	template<typename T>
 	using vector = std::vector<T, GodotAllocator<T>>;
@@ -67,7 +71,7 @@ namespace godot {
 		void build_objects();
 	private:
 		jcv_diagram _diagram;
-		voronoi_detail::vector<int> _sites_by_index;
+		voronoi_detail::map<int, int> _sites_by_index;
 	};
 
 	class Voronoi : public Reference {

@@ -96,7 +96,7 @@ Array VoronoiDiagram::site_get_neighbors(const int site_id) const {
 	const jcv_graphedge *graphedge = sites[site_id].edges;
 	while (graphedge) {
 		if (graphedge->neighbor)
-			result.push_back(_sites_by_index[graphedge->neighbor->index]);
+			result.push_back(_sites_by_index.at(graphedge->neighbor->index));
 		graphedge = graphedge->next;
 	}
 	return result;
@@ -111,8 +111,6 @@ void VoronoiDiagram::set_diagram(const jcv_diagram &diagram) {
 }
 
 void VoronoiDiagram::build_objects() {
-	_sites_by_index.resize(_diagram.numsites);
-
 	const jcv_site *sites = jcv_diagram_get_sites(&_diagram);
 	for (int i = 0; i < _diagram.numsites; i++)
 		_sites_by_index[sites[i].index] = i;
